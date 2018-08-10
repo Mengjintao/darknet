@@ -973,7 +973,18 @@ void save_convolutional_weights(layer l, FILE *fp)
         fwrite(l.rolling_mean, sizeof(float), l.n, fp);
         fwrite(l.rolling_variance, sizeof(float), l.n, fp);
     }
+
     fwrite(l.weights, sizeof(float), num, fp);
+/*    printf("Conv weights %d bias %d",num, l.n);
+    if(l.batch_normalize)	printf("BN scale variance %d\n", l.n);
+
+    for(int i=0;i<num;i++)	printf("%f\n", l.weights[i]);		printf("\n");
+    for(int i=0;i<l.n;i++)	printf("%f\n", l.biases[i]);    	printf("\n");
+    
+    for(int i=0;i<l.n;i++)	printf("%f\n", l.scales[i]);		printf("\n");
+    for(int i=0;i<l.n;i++)	printf("%f\n", l.rolling_mean[i]);	printf("\n");
+    for(int i=0;i<l.n;i++)	printf("%f\n", l.rolling_variance[i]);	printf("\n");
+*/
 }
 
 void save_batchnorm_weights(layer l, FILE *fp)
@@ -1174,7 +1185,7 @@ void load_convolutional_weights(layer l, FILE *fp)
         fread(l.scales, sizeof(float), l.n, fp);
         fread(l.rolling_mean, sizeof(float), l.n, fp);
         fread(l.rolling_variance, sizeof(float), l.n, fp);
-        if(0){
+        if(1){
             int i;
             for(i = 0; i < l.n; ++i){
                 printf("%g, ", l.rolling_mean[i]);
@@ -1202,6 +1213,19 @@ void load_convolutional_weights(layer l, FILE *fp)
         }
     }
     fread(l.weights, sizeof(float), num, fp);
+
+    printf("Conv weights %d bias %d",num, l.n);
+    if(l.batch_normalize)	printf("BN scale variance %d\n", l.n);
+
+    for(int i=0;i<num;i++)	printf("%g\n", l.weights[i]);		printf("\n");
+    for(int i=0;i<l.n;i++)	printf("%g\n", l.biases[i]);    	printf("\n");
+    
+    if (l.batch_normalize && (!l.dontloadscales)){
+    	for(int i=0;i<l.n;i++)	printf("%g\n", l.scales[i]);		printf("\n");
+    	for(int i=0;i<l.n;i++)	printf("%g\n", l.rolling_mean[i]);	printf("\n");
+    	for(int i=0;i<l.n;i++)	printf("%g\n", l.rolling_variance[i]);	printf("\n");
+    }
+
     //if(l.c == 3) scal_cpu(num, 1./256, l.weights, 1);
     if (l.flipped) {
         transpose_matrix(l.weights, l.c*l.size*l.size, l.n);
@@ -1212,6 +1236,7 @@ void load_convolutional_weights(layer l, FILE *fp)
         push_convolutional_layer(l);
     }
 #endif
+
 }
 
 

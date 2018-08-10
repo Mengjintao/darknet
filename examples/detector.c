@@ -13,6 +13,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
     char *base = basecfg(cfgfile);
     printf("%s\n", base);
     float avg_loss = -1;
+    ngpus = 1;
     network **nets = calloc(ngpus, sizeof(network));
 
     srand(time(0));
@@ -55,6 +56,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
     //args.type = INSTANCE_DATA;
     args.threads = 64;
 
+/*
     pthread_t load_thread = load_data(args);
     double time;
     int count = 0;
@@ -84,7 +86,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
         pthread_join(load_thread, 0);
         train = buffer;
         load_thread = load_data(args);
-
+*/
         /*
            int k;
            for(k = 0; k < l.max_boxes; ++k){
@@ -108,7 +110,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
            save_image(im, "truth11");
            }
          */
-
+/*
         printf("Loaded: %lf seconds\n", what_time_is_it_now()-time);
 
         time=what_time_is_it_now();
@@ -148,6 +150,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 #ifdef GPU
     if(ngpus != 1) sync_nets(nets, ngpus, 0);
 #endif
+*/
     char buff[256];
     sprintf(buff, "%s/%s_final.weights", backup_directory, base);
     save_weights(net, buff);
